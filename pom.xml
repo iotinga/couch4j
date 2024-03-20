@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.tinga.couch4j</groupId>
     <artifactId>couch4j</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11</version>
     <name>Couch4j</name>
     <description>A simple Apache CouchDb client in Java</description>
 
@@ -84,6 +84,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${version.jackson}</version>
         </dependency>
 

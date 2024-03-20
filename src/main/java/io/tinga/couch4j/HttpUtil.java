@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import io.tinga.couch4j.exception.CouchException;
@@ -21,7 +22,9 @@ class HttpUtil {
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
     private static final MediaType BINARY_MEDIA_TYPE = MediaType.get("application/octet-stream");
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .findAndAddModules()
+            .build();
     private static final TypeFactory TYPE_FACTORY = OBJECT_MAPPER.getTypeFactory();
 
     public static RequestBody getJsonBody(Object object) throws CouchException {
