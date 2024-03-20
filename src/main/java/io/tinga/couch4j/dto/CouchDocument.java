@@ -2,6 +2,8 @@ package io.tinga.couch4j.dto;
 
 import jakarta.annotation.Nullable;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -20,6 +22,9 @@ public class CouchDocument implements CouchKey {
 
     @Nullable
     private Boolean deleted;
+
+    @Nullable
+    private List<CouchAttachment> attachments;
 
     /**
      * Construct a document without the id
@@ -94,5 +99,17 @@ public class CouchDocument implements CouchKey {
     @Override
     public String toString() {
         return id;
+    }
+
+    /**
+     * Return the attachment of this document
+     * 
+     * @return
+     */
+    @Nullable
+    @JsonGetter("_attachments")
+    @JsonInclude(Include.NON_NULL)
+    public List<CouchAttachment> getAttachments() {
+        return attachments;
     }
 }

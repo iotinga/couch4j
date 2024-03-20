@@ -25,6 +25,14 @@ public interface CouchDatabase {
         void createDbIfNotExists() throws CouchException;
 
         /**
+         * Deletes the specified database, and all the associated document
+         * <b>WARNING: use with caution!</b>
+         * 
+         * @throws CouchException
+         */
+        void dropDb() throws CouchException;
+
+        /**
          * Gets the document with the specified id
          * 
          * @param <K> type of the key object. The id of the document is the result
@@ -93,12 +101,12 @@ public interface CouchDatabase {
         /**
          * Get the attachment of a document
          * 
-         * @param docId id of the document
-         * @param id    id of the attachment
+         * @param doc document of the attachment
+         * @param id  id of the attachment
          * @return the attachment raw content
          * @throws CouchException
          */
-        <K> byte[] getAttachment(K docId, String id) throws CouchException;
+        byte[] getAttachment(CouchDocument doc, String id) throws CouchException;
 
         /**
          * Puts a document in the database.
@@ -110,10 +118,9 @@ public interface CouchDatabase {
          * Updates the provided doc revision and id, modifying the object in place.
          * 
          * @param doc the document to put
-         * @return the new document revision code
          * @throws CouchException
          */
-        String put(CouchDocument doc) throws CouchException;
+        void put(CouchDocument doc) throws CouchException;
 
         /**
          * Puts, updates or deletes a list of documents in the couchdb.
@@ -128,57 +135,34 @@ public interface CouchDatabase {
         /**
          * Put the attachment of a document. Use this method only to
          * create a new attachment.
+         * The doc object is updated with the new rev code.
          * 
-         * @param docId   id of the document
+         * @param doc     document to put attachment to
          * @param id      id of the attachment
          * @param content content of the attachment
          * @return the updated document revision (putting attachment updates it)
          * @throws CouchException
          */
-        <K> String putAttachment(K docId, String id, byte[] content) throws CouchException;
-
-        /**
-         * Put the attachment of a document. If a docRev is specified,
-         * the existing attachment is updated
-         * 
-         * @param docId   id of the document
-         * @param docRev  revision of the document
-         * @param id      id of the attachment
-         * @param content content of the attachment
-         * @return the updated document revision (putting attachment updates it)
-         * @throws CouchException
-         */
-        <K> String putAttachment(K docId, String docRev, String id, byte[] content) throws CouchException;
+        void putAttachment(CouchDocument doc, String id, byte[] content) throws CouchException;
 
         /**
          * Deletes the specified document
          * 
          * @param doc the document to delete. Shall include _id and _rev field
-         * @return the id of the deleted document in case of success
          * @throws CouchException
          */
-        String delete(CouchDocument doc) throws CouchException;
+        void delete(CouchDocument doc) throws CouchException;
 
         /**
-         * Deletes the specified document
+         * Deletes the specified document attachment.
+         * The doc is updated with the new rev code.
          * 
-         * @param id  id of the document to delete
-         * @param rev revision code of the document to delete
+         * @param doc document of the attachment
+         * @param id  id of the attachment to delete
          * @return the id of the deleted document in case of success
          * @throws CouchException
          */
-        <K> String delete(K id, String rev) throws CouchException;
-
-        /**
-         * Deletes the specified document attachment
-         * 
-         * @param docId  id of the document to delete
-         * @param docRev revision code of the document to delete
-         * @param id     id of the attachment to delete
-         * @return the id of the deleted document in case of success
-         * @throws CouchException
-         */
-        <K> String deleteAttachment(K docId, String docRev, String id) throws CouchException;
+        void deleteAttachment(CouchDocument doc, String id) throws CouchException;
 
         /**
          * Executes a find query

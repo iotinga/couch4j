@@ -17,6 +17,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 class CouchServerImpl implements CouchServer {
+    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
+
     private HttpUrl baseUrl;
     private CouchAuthentication auth;
     private OkHttpClient client = new OkHttpClient();
@@ -36,8 +38,11 @@ class CouchServerImpl implements CouchServer {
                 .addHeader("Authorization", auth.getAuthorizationHeader())
                 .build();
 
+        log.debug("send {}", requestWithAuth);
+
         try {
             Response response = client.newCall(requestWithAuth).execute();
+            log.debug("response {}", response);
             if (!response.isSuccessful()) {
                 throw CouchExceptionFactory.getExceptionFromResponse(response);
             }

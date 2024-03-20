@@ -2,6 +2,9 @@ package io.tinga.couch4j.dto;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * A document attachment
+ */
 public class CouchAttachment {
     private String content_type;
     private String digest;

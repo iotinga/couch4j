@@ -16,7 +16,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class CouchExceptionFactory {
-    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CouchExceptionFactory.class);
 
     public static CouchException getExceptionFromResponse(Response response) {
         CouchErrorResponse errorResponse = null;
@@ -31,7 +31,7 @@ public class CouchExceptionFactory {
             }
         }
 
-        log.warn("CouchDB request failed with code {} {}", response.code(), bodyAsString);
+        log.warn("request failed with code {} {}", response.code(), bodyAsString);
 
         switch (response.code()) {
             case 400:

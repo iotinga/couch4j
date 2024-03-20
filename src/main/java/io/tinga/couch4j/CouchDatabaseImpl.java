@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.tinga.couch4j.changes.CouchChangesRequest;
 import io.tinga.couch4j.changes.CouchChangesResponse;
 import io.tinga.couch4j.dto.CouchBulkGetRequest;
@@ -23,8 +26,10 @@ import io.tinga.couch4j.find.CouchFindResponse;
 import io.tinga.couch4j.view.CouchViewQuery;
 import io.tinga.couch4j.view.CouchViewResponse;
 import okhttp3.HttpUrl;
+import okhttp3.RequestBody;
 
 class CouchDatabaseImpl implements CouchDatabase {
+    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
 
     private CouchServerImpl server;
     private HttpUrl baseUrl;
@@ -42,15 +47,17 @@ class CouchDatabaseImpl implements CouchDatabase {
 
     @Override
     public void createDbIfNotExists() throws CouchException {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(name)
-                .build();
-
         try {
-            server.jsonPut(url, Map.of(), Object.class);
+            server.put(baseUrl, RequestBody.create(new byte[] {})).close();
         } catch (CouchPreconditionFailed e) {
-            // db already exists. This is not a failure.
+            log.debug("db already exists. This is not a failure.");
         }
+    }
+
+    @Override
+    public void dropDb() throws CouchException {
+        server.delete(baseUrl).close();
+        log.info("dropped database {}", name);
     }
 
     @Override
@@ -75,9 +82,9 @@ class CouchDatabaseImpl implements CouchDatabase {
     }
 
     @Override
-    public <K> byte[] getAttachment(K docId, String id) throws CouchException {
+    public byte[] getAttachment(CouchDocument doc, String id) throws CouchException {
         HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(docId.toString())
+                .addPathSegment(doc.getId())
                 .addPathSegment(id)
                 .build();
 
@@ -85,7 +92,7 @@ class CouchDatabaseImpl implements CouchDatabase {
     }
 
     @Override
-    public String put(CouchDocument doc) throws CouchException {
+    public void put(CouchDocument doc) throws CouchException {
         CouchPutResponse response;
         if (doc.getId() == null) {
             response = server.jsonPost(baseUrl, doc, CouchPutResponse.class);
@@ -96,44 +103,41 @@ class CouchDatabaseImpl implements CouchDatabase {
             if (doc.getRev() != null) {
                 urlBuilder.addQueryParameter("rev", doc.getRev());
             }
-            response = server.jsonPost(urlBuilder.build(), doc, CouchPutResponse.class);
+            response = server.jsonPut(urlBuilder.build(), doc, CouchPutResponse.class);
+
+        }
+
+        if (doc.getRev() == null) {
+            log.debug("created doc {} {}", response.getId(), response.getRev());
+        } else {
+            log.debug("updated doc {} {}", response.getId(), response.getRev());
+
         }
 
         doc.setId(response.getId());
         doc.setRev(response.getRev());
-
-        return response.getRev();
     }
 
     @Override
-    public <K> String putAttachment(K docId, String id, byte[] content) throws CouchException {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(docId.toString())
-                .addPathSegment(id)
-                .build();
+    public void putAttachment(CouchDocument doc, String id, byte[] content) throws CouchException {
+        HttpUrl.Builder url = baseUrl.newBuilder()
+                .addPathSegment(doc.getId())
+                .addPathSegment(id);
+        if (doc.getRev() != null) {
+            url.addQueryParameter("rev", doc.getRev());
+        }
 
-        CouchPutResponse response = HttpUtil.getJsonResponseBody(server.put(url, HttpUtil.getBinaryBody(content)),
+        CouchPutResponse response = HttpUtil.getJsonResponseBody(
+                server.put(url.build(), HttpUtil.getBinaryBody(content)),
                 CouchPutResponse.class);
 
-        return response.getRev();
+        doc.setRev(response.getRev());
+
+        log.debug("updated att {} {} {}", doc.getId(), doc.getRev(), id);
     }
 
     @Override
-    public <K> String putAttachment(K docId, String docRev, String id, byte[] content) throws CouchException {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(docId.toString())
-                .addPathSegment(id)
-                .addQueryParameter("rev", docRev)
-                .build();
-
-        CouchPutResponse response = HttpUtil.getJsonResponseBody(server.put(url, HttpUtil.getBinaryBody(content)),
-                CouchPutResponse.class);
-
-        return response.getRev();
-    }
-
-    @Override
-    public String delete(CouchDocument doc) throws CouchException {
+    public void delete(CouchDocument doc) throws CouchException {
         HttpUrl url = baseUrl
                 .newBuilder()
                 .addPathSegment(doc.getId())
@@ -145,24 +149,22 @@ class CouchDatabaseImpl implements CouchDatabase {
         doc.setRev(response.getRev());
         doc.setDeleted(true);
 
-        return response.getRev();
+        log.debug("deleted doc {} {}", doc.getId(), doc.getRev());
     }
 
     @Override
-    public <K> String delete(K id, String rev) throws CouchException {
-        return delete(new CouchDocument(id.toString(), rev));
-    }
+    public void deleteAttachment(CouchDocument doc, String id) throws CouchException {
+        HttpUrl.Builder url = baseUrl.newBuilder()
+                .addPathSegment(doc.getId())
+                .addPathSegment(id);
+        if (doc.getRev() != null) {
+            url.addQueryParameter("rev", doc.getRev());
+        }
 
-    @Override
-    public <K> String deleteAttachment(K docId, String docRev, String id) throws CouchException {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment(docId.toString())
-                .addPathSegment(id)
-                .build();
+        CouchPutResponse response = server.jsonDelete(url.build(), CouchPutResponse.class);
+        doc.setRev(response.getRev());
 
-        CouchPutResponse response = server.jsonDelete(url, CouchPutResponse.class);
-
-        return response.getRev();
+        log.debug("deleted att {} {} {}", doc.getId(), doc.getRev(), id);
     }
 
     @Override
@@ -217,12 +219,23 @@ class CouchDatabaseImpl implements CouchDatabase {
                 .addPathSegment("_bulk_docs")
                 .build();
 
+        Map<String, CouchDocument> docsMap = new HashMap<>();
+        for (CouchDocument doc : docs) {
+            docsMap.put(doc.getId(), doc);
+        }
+
         CouchBulkUpdateRequest<T> request = new CouchBulkUpdateRequest<>(docs);
         List<CouchBulkUpdateResponseItem> response = server.jsonPost(url, request, ArrayList.class,
                 CouchBulkUpdateResponseItem.class);
         Map<String, CouchBulkUpdateResponseItem> result = new HashMap<>();
         for (CouchBulkUpdateResponseItem item : response) {
             result.put(item.getId(), item);
+            if (item.isOk()) {
+                CouchDocument oldDoc = docsMap.get(item.getId());
+                if (oldDoc != null) {
+                    docsMap.get(item.getId()).setRev(item.getRev());
+                }
+            }
         }
 
         return result;

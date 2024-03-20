@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.tinga.couch4j</groupId>
     <artifactId>couch4j</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <name>Couch4j</name>
     <description>A simple Apache CouchDb client in Java</description>
 
@@ -56,6 +56,8 @@
         <version.annotation>3.0.0-M1</version.annotation>
         <version.okhttp3>4.12.0</version.okhttp3>
         <version.slf4j>2.0.9</version.slf4j>
+        <version.javafaker>1.0.2</version.javafaker>
+        <version.log4j2>2.22.1</version.log4j2>
     </properties>
 
     <dependencies>
@@ -103,6 +105,18 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>${version.javafaker}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${version.log4j2}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

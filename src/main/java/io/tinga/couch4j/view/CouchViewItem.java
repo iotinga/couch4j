@@ -2,6 +2,9 @@ package io.tinga.couch4j.view;
 
 import jakarta.annotation.Nullable;
 
+/**
+ * Result of a view query
+ */
 public class CouchViewItem<K, V, D> {
     private String id;
     private K key;
@@ -10,35 +13,41 @@ public class CouchViewItem<K, V, D> {
     @Nullable
     private D doc;
 
+    /**
+     * Get the document in the view response.
+     * This is present only if the setIncludeDocs(true) was specified in the view
+     * query.
+     * 
+     * @return
+     */
     public D getDoc() {
         return doc;
     }
 
-    public void setDoc(D doc) {
-        this.doc = doc;
-    }
-
+    /**
+     * Get the id of the document that was emitted
+     * 
+     * @return
+     */
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Get the view key that was emitted
+     * 
+     * @return
+     */
     public K getKey() {
         return key;
     }
 
-    public void setKey(K key) {
-        this.key = key;
-    }
-
+    /**
+     * Get the view value that was emitted
+     * 
+     * @return
+     */
     public V getValue() {
         return value;
-    }
-
-    public void setValue(V value) {
-        this.value = value;
     }
 }

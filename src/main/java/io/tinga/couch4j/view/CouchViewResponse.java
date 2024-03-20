@@ -3,50 +3,52 @@ package io.tinga.couch4j.view;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
+/**
+ * Response to a view query
+ */
 public class CouchViewResponse<K, V, D> {
     private long updateSeq;
     private long offset;
     private long totalRows;
     private List<CouchViewItem<K, V, D>> rows;
 
-    public CouchViewResponse() {
-    }
-
+    /**
+     * Offset where the document list started.
+     * 
+     * @return
+     */
     public long getOffset() {
         return offset;
     }
 
-    public void setOffset(long offset) {
-        this.offset = offset;
-    }
-
+    /**
+     * Number of documents in the database/view.
+     * 
+     * @return
+     */
     @JsonGetter("total_rows")
     public long getTotalRows() {
         return totalRows;
     }
 
-    @JsonSetter("total_rows")
-    public void setTotalRows(long totalRows) {
-        this.totalRows = totalRows;
-    }
-
+    /**
+     * Array of view row objects. By default the information returned contains only
+     * the document ID and revision.
+     * 
+     * @return
+     */
     public List<CouchViewItem<K, V, D>> getRows() {
         return rows;
     }
 
-    public void setRows(List<CouchViewItem<K, V, D>> rows) {
-        this.rows = rows;
-    }
-
+    /**
+     * Current update sequence for the database.
+     * 
+     * @return
+     */
     @JsonGetter("update_seq")
     public long getUpdateSeq() {
         return updateSeq;
-    }
-
-    @JsonSetter("update_seq")
-    public void setUpdateSeq(long update_seq) {
-        this.updateSeq = update_seq;
     }
 }
