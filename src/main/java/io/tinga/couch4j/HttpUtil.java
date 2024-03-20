@@ -2,6 +2,9 @@ package io.tinga.couch4j;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -13,6 +16,8 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 class HttpUtil {
+    private static final Logger log = LoggerFactory.getLogger(HttpUtil.class);
+
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
     private static final MediaType BINARY_MEDIA_TYPE = MediaType.get("application/octet-stream");
 
@@ -41,6 +46,7 @@ class HttpUtil {
         try {
             return getJsonResponseBody(body.string(), classOfT, parameterClasses);
         } catch (IOException e) {
+            log.error("error deserializing JSON body", e);
             throw new CouchException("response is not a valid JSON. This is not expected here!");
         } finally {
             body.close();
@@ -64,6 +70,7 @@ class HttpUtil {
 
             return bytes;
         } catch (IOException e) {
+            log.error("error reading binary body response", e);
             throw new CouchNetworkError();
         } finally {
             body.close();
