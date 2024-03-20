@@ -1,5 +1,7 @@
 package io.tinga.couch4j;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,15 +21,17 @@ public class CouchExceptionFactory {
     public static CouchException getExceptionFromResponse(Response response) {
         CouchErrorResponse errorResponse = null;
         ResponseBody body = response.body();
+        String bodyAsString = "NO_BODY";
         if (body != null) {
             try {
-                errorResponse = HttpUtil.getJsonResponseBody(body, CouchErrorResponse.class);
-            } catch (Exception e) {
+                bodyAsString = body.string();
+                errorResponse = HttpUtil.getJsonResponseBody(bodyAsString, CouchErrorResponse.class);
+            } catch (IOException e) {
                 // ignored
             }
         }
 
-        log.warn("CouchDB request failed with code {} {}", response.code(), errorResponse);
+        log.warn("CouchDB request failed with code {} {}", response.code(), bodyAsString);
 
         switch (response.code()) {
             case 400:

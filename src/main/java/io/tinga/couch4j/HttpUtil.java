@@ -39,13 +39,18 @@ class HttpUtil {
         }
 
         try {
-            return OBJECT_MAPPER.readValue(body.string(),
-                    TYPE_FACTORY.constructParametricType(classOfT, parameterClasses));
+            return getJsonResponseBody(body.string(), classOfT, parameterClasses);
         } catch (IOException e) {
             throw new CouchException("response is not a valid JSON. This is not expected here!");
         } finally {
             body.close();
         }
+    }
+
+    public static <T> T getJsonResponseBody(String body, Class<?> classOfT, Class<?>... parameterClasses)
+            throws IOException {
+        return OBJECT_MAPPER.readValue(body,
+                TYPE_FACTORY.constructParametricType(classOfT, parameterClasses));
     }
 
     public static byte[] getBinaryResponseBody(ResponseBody body) throws CouchException {
