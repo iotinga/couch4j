@@ -5,15 +5,15 @@ import java.util.List;
 /**
  * Request for a POST /{db}/_bulk_docs request
  */
-public class CouchBulkUpdateRequest {
-    private List<CouchDocument> docs;
+public class CouchBulkUpdateRequest<T extends CouchDocument> {
+    private List<T> docs;
 
     /**
      * Initialize with a list of document
      * 
      * @param docs a list of documents
      */
-    public CouchBulkUpdateRequest(List<CouchDocument> docs) {
+    public CouchBulkUpdateRequest(List<T> docs) {
         this.docs = docs;
     }
 
@@ -22,7 +22,7 @@ public class CouchBulkUpdateRequest {
      * 
      * @return a list of document
      */
-    public List<CouchDocument> getDocs() {
+    public List<T> getDocs() {
         return docs;
     }
 }

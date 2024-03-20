@@ -123,7 +123,7 @@ public interface CouchDatabase {
          * @return a map containing the response of the operation for each document
          * @throws CouchException if the update of all documents fails.
          */
-        Map<String, CouchBulkUpdateResponseItem> putMany(List<CouchDocument> docs) throws CouchException;
+        <T extends CouchDocument> Map<String, CouchBulkUpdateResponseItem> putMany(List<T> docs) throws CouchException;
 
         /**
          * Put the attachment of a document. Use this method only to

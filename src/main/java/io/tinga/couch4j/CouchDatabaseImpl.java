@@ -211,12 +211,13 @@ class CouchDatabaseImpl implements CouchDatabase {
     }
 
     @Override
-    public Map<String, CouchBulkUpdateResponseItem> putMany(List<CouchDocument> docs) throws CouchException {
+    public <T extends CouchDocument> Map<String, CouchBulkUpdateResponseItem> putMany(List<T> docs)
+            throws CouchException {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("_bulk_docs")
                 .build();
 
-        CouchBulkUpdateRequest request = new CouchBulkUpdateRequest(docs);
+        CouchBulkUpdateRequest<T> request = new CouchBulkUpdateRequest<>(docs);
         List<CouchBulkUpdateResponseItem> response = server.jsonPost(url, request, ArrayList.class,
                 CouchBulkUpdateResponseItem.class);
         Map<String, CouchBulkUpdateResponseItem> result = new HashMap<>();
