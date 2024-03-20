@@ -13,6 +13,7 @@ import io.tinga.couch4j.dto.CouchBulkUpdateRequest;
 import io.tinga.couch4j.dto.CouchBulkUpdateResponseItem;
 import io.tinga.couch4j.dto.CouchDesignDocument;
 import io.tinga.couch4j.dto.CouchDocument;
+import io.tinga.couch4j.dto.CouchOkErrorResponse;
 import io.tinga.couch4j.dto.CouchPutResponse;
 import io.tinga.couch4j.exception.CouchConflictException;
 import io.tinga.couch4j.exception.CouchException;
@@ -23,7 +24,7 @@ import io.tinga.couch4j.view.CouchViewQuery;
 import io.tinga.couch4j.view.CouchViewResponse;
 import okhttp3.HttpUrl;
 
-public class CouchDatabaseImpl implements CouchDatabase {
+class CouchDatabaseImpl implements CouchDatabase {
 
     private CouchServerImpl server;
     private HttpUrl baseUrl;
@@ -194,7 +195,7 @@ public class CouchDatabaseImpl implements CouchDatabase {
         CouchBulkGetResponse<T> response = server.jsonPost(url, request, CouchBulkGetResponse.class, classOfT);
         Map<String, T> docs = new HashMap<>();
         for (CouchBulkGetResponse.Item<T> result : response.getResults()) {
-            for (CouchBulkGetResponse.Docs<T> doc : result.getDocs()) {
+            for (CouchOkErrorResponse<T> doc : result.getDocs()) {
                 if (doc.isOk()) {
                     docs.put(result.getId(), doc.getOk());
                 }

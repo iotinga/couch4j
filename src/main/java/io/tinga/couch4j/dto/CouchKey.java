@@ -1,11 +1,17 @@
 package io.tinga.couch4j.dto;
 
+import jakarta.annotation.Nullable;
+
+/**
+ * A key for a CouchDb document
+ */
 public interface CouchKey {
     /**
      * The id of the document (_id field).
      * 
      * @return the id of the document
      */
+    @Nullable
     String getId();
 
     /**
@@ -14,5 +20,6 @@ public interface CouchKey {
      * 
      * @return revision code of the document
      */
+    @Nullable
     String getRev();
 }

@@ -1,6 +1,6 @@
 package io.tinga.couch4j.exception;
 
-import io.tinga.couch4j.dto.CouchErrorStatus;
+import io.tinga.couch4j.dto.CouchErrorResponse;
 import jakarta.annotation.Nullable;
 
 public class CouchException extends Exception {
@@ -11,7 +11,7 @@ public class CouchException extends Exception {
         super(message);
     }
 
-    public CouchException(String message, CouchErrorStatus response) {
+    public CouchException(String message, CouchErrorResponse response) {
         this(message);
         this.reason = response.getReason();
         this.error = response.getError();

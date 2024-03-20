@@ -12,7 +12,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
-public class HttpUtil {
+class HttpUtil {
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
     private static final MediaType BINARY_MEDIA_TYPE = MediaType.get("application/octet-stream");
 

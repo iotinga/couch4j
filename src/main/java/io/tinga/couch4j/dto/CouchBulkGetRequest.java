@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class CouchBulkGetRequest {
-    static class Doc {
+    public static class Doc {
         private String id;
 
         @JsonInclude(Include.NON_NULL)

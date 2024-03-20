@@ -2,66 +2,41 @@ package io.tinga.couch4j.dto;
 
 import java.util.List;
 
-import jakarta.annotation.Nullable;
-
 public class CouchBulkGetResponse<T> {
-    public static class Error {
-        private String id;
-        private String rev;
-        private String error;
-        private String reason;
-
-        public String getId() {
-            return id;
-        }
-
-        public String getRev() {
-            return rev;
-        }
-
-        public String getError() {
-            return error;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-    }
-
-    public static class Docs<T> {
-        private T ok;
-        private Error error;
-
-        public boolean isOk() {
-            return ok != null;
-        }
-
-        @Nullable
-        public T getOk() {
-            return ok;
-        }
-
-        @Nullable
-        public Error getError() {
-            return error;
-        }
-    }
-
+    /**
+     * An item in the response
+     */
     public static class Item<T> {
         private String id;
-        private List<Docs<T>> docs;
+        private List<CouchOkErrorResponse<T>> docs;
 
+        /**
+         * Get the id of the document
+         * 
+         * @return the id of the document
+         */
         public String getId() {
             return id;
         }
 
-        public List<Docs<T>> getDocs() {
+        /**
+         * Get the requested documents. More document may be returned
+         * if all the revisions are asked
+         * 
+         * @return list of document
+         */
+        public List<CouchOkErrorResponse<T>> getDocs() {
             return docs;
         }
     }
 
     private List<Item<T>> results;
 
+    /**
+     * Get the request result
+     * 
+     * @return a list of items
+     */
     public List<Item<T>> getResults() {
         return results;
     }

@@ -1,9 +1,9 @@
 package io.tinga.couch4j.exception;
 
-import io.tinga.couch4j.dto.CouchErrorStatus;
+import io.tinga.couch4j.dto.CouchErrorResponse;
 
 public class CouchNotAuthorizedException extends CouchException {
-    public CouchNotAuthorizedException(CouchErrorStatus response) {
+    public CouchNotAuthorizedException(CouchErrorResponse response) {
         super("authentication error", response);
     }
 

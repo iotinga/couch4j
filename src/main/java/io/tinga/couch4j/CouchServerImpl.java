@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import io.tinga.couch4j.auth.CouchAuthentication;
 import io.tinga.couch4j.exception.CouchException;
-import io.tinga.couch4j.exception.CouchExceptionFactory;
 import io.tinga.couch4j.exception.CouchNetworkError;
 import jakarta.annotation.Nullable;
 import okhttp3.HttpUrl;
@@ -14,7 +13,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class CouchServerImpl implements CouchServer {
+class CouchServerImpl implements CouchServer {
     private HttpUrl baseUrl;
     private CouchAuthentication auth;
     private OkHttpClient client = new OkHttpClient();

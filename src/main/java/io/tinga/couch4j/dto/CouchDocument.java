@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+/**
+ * A base CouchDb document. Must be extended by the document
+ * that are used in the application.
+ */
 public class CouchDocument implements CouchKey {
     @Nullable
     private String id;
@@ -17,13 +21,25 @@ public class CouchDocument implements CouchKey {
     @Nullable
     private Boolean deleted;
 
+    /**
+     * Construct a document without the id
+     */
     public CouchDocument() {
     }
 
+    /**
+     * Construct a document with a specified id
+     */
     public CouchDocument(String id) {
         this.id = id;
     }
 
+    /**
+     * Construct a document with specified id and revision number
+     * 
+     * @param id
+     * @param rev
+     */
     public CouchDocument(String id, String rev) {
         this(id);
         this.rev = rev;
@@ -53,16 +69,23 @@ public class CouchDocument implements CouchKey {
         this.rev = rev;
     }
 
-    public boolean isDeleted() {
-        return deleted != null && deleted;
-    }
-
+    /**
+     * True if the document is deleted
+     * 
+     * @return
+     */
     @JsonGetter("_deleted")
+    @Nullable
     @JsonInclude(Include.NON_NULL)
     public Boolean getDeleted() {
         return deleted;
     }
 
+    /**
+     * Set the document for deletion
+     * 
+     * @param deleted
+     */
     @JsonSetter("_deleted")
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
