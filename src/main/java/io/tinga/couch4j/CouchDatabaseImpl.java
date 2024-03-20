@@ -96,6 +96,7 @@ class CouchDatabaseImpl implements CouchDatabase {
         CouchPutResponse response;
         if (doc.getId() == null) {
             response = server.jsonPost(baseUrl, doc, CouchPutResponse.class);
+            doc.setId(response.getId());
         } else {
             // a document update/creation with ID
             HttpUrl.Builder urlBuilder = baseUrl.newBuilder()
@@ -114,7 +115,6 @@ class CouchDatabaseImpl implements CouchDatabase {
 
         }
 
-        doc.setId(response.getId());
         doc.setRev(response.getRev());
     }
 
