@@ -17,8 +17,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 class CouchServerImpl implements CouchServer {
-    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
-
     private HttpUrl baseUrl;
     private CouchAuthentication auth;
     private OkHttpClient client = new OkHttpClient();

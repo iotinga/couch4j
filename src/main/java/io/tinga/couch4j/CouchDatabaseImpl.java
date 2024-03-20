@@ -47,7 +47,7 @@ class CouchDatabaseImpl implements CouchDatabase {
                 .build();
 
         try {
-            server.put(url, HttpUtil.getBinaryBody(new byte[] {}));
+            server.jsonPut(url, Map.of(), Object.class);
         } catch (CouchPreconditionFailed e) {
             // db already exists. This is not a failure.
         }
