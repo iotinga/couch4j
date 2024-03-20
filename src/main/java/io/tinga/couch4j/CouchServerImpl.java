@@ -2,6 +2,9 @@ package io.tinga.couch4j;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.tinga.couch4j.auth.CouchAuthentication;
 import io.tinga.couch4j.exception.CouchException;
 import io.tinga.couch4j.exception.CouchNetworkError;
@@ -14,6 +17,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 class CouchServerImpl implements CouchServer {
+    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
+
     private HttpUrl baseUrl;
     private CouchAuthentication auth;
     private OkHttpClient client = new OkHttpClient();

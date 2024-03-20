@@ -1,5 +1,8 @@
 package io.tinga.couch4j;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.tinga.couch4j.dto.CouchErrorResponse;
 import io.tinga.couch4j.exception.CouchConflictException;
 import io.tinga.couch4j.exception.CouchException;
@@ -11,6 +14,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class CouchExceptionFactory {
+    private static final Logger log = LoggerFactory.getLogger(CouchServerImpl.class);
 
     public static CouchException getExceptionFromResponse(Response response) {
         CouchErrorResponse errorResponse = null;
@@ -22,6 +26,8 @@ public class CouchExceptionFactory {
                 // ignored
             }
         }
+
+        log.warn("CouchDB request failed with code {} {}", response.code(), errorResponse);
 
         switch (response.code()) {
             case 400:
