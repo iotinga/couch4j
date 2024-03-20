@@ -10,6 +10,8 @@ deploy:
 release:
 	./mvnw versions:set -DnewVersion=$(VERSION)
 	./mvnw versions:commit
-	git pull && git commit -am "bump version to $(VERSION)" && git push
+	git pull 
+	git commit -am "bump version to $(VERSION)" || true
+	git push
 	./mvnw deploy
 
