@@ -4,6 +4,8 @@ import java.util.List;
 
 /**
  * Request for a POST /{db}/_bulk_docs request
+ * 
+ * @param <T> type of the document
  */
 public class CouchBulkUpdateRequest<T extends CouchDocument> {
     private List<T> docs;

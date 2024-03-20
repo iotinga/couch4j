@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * A view query request
+ * 
+ * @param <K> type of the key
+ * @param <V> type of the value
  */
 public class CouchViewQuery<K, V> {
     private String designDoc;

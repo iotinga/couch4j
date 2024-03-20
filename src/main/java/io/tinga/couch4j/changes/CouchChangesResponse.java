@@ -3,36 +3,40 @@ package io.tinga.couch4j.changes;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
+/**
+ * Changes feed response
+ */
 public class CouchChangesResponse {
     private Long lastSeq;
     private Integer pending;
     private List<CouchChangeItem> results;
 
+    /**
+     * Get last sequence
+     * 
+     * @return
+     */
     @JsonGetter("last_seq")
     public long getLastSeq() {
         return lastSeq;
     }
 
-    @JsonSetter("last_seq")
-    public void setLast_seq(long last_seq) {
-        this.lastSeq = last_seq;
-    }
-
+    /**
+     * Get the results
+     * 
+     * @return
+     */
     public List<CouchChangeItem> getResults() {
         return results;
     }
 
-    public void setResults(List<CouchChangeItem> results) {
-        this.results = results;
-    }
-
+    /**
+     * Get pending
+     * 
+     * @return
+     */
     public Integer getPending() {
         return pending;
-    }
-
-    public void setPending(Integer pending) {
-        this.pending = pending;
     }
 }

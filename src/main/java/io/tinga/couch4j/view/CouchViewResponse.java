@@ -6,6 +6,11 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 
 /**
  * Response to a view query
+ * 
+ * @param <K> type of the key
+ * @param <V> type of the value
+ * @param <D> type of the document
+ * 
  */
 public class CouchViewResponse<K, V, D> {
     private long updateSeq;

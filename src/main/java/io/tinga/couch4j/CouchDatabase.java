@@ -140,7 +140,6 @@ public interface CouchDatabase {
          * @param doc     document to put attachment to
          * @param id      id of the attachment
          * @param content content of the attachment
-         * @return the updated document revision (putting attachment updates it)
          * @throws CouchException
          */
         void putAttachment(CouchDocument doc, String id, byte[] content) throws CouchException;
@@ -159,7 +158,6 @@ public interface CouchDatabase {
          * 
          * @param doc document of the attachment
          * @param id  id of the attachment to delete
-         * @return the id of the deleted document in case of success
          * @throws CouchException
          */
         void deleteAttachment(CouchDocument doc, String id) throws CouchException;

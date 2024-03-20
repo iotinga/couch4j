@@ -5,6 +5,8 @@ import java.util.List;
 public class CouchBulkGetResponse<T> {
     /**
      * An item in the response
+     * 
+     * @param <T> type of the document
      */
     public static class Item<T> {
         private String id;

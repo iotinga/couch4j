@@ -25,8 +25,6 @@ public class CouchAttachment {
 
     /**
      * Get the MIME type of the attachment
-     * 
-     * @return content type string
      */
     public String getContentType() {
         return content_type;
@@ -34,8 +32,6 @@ public class CouchAttachment {
 
     /**
      * Get an hash of the attachment
-     * 
-     * @return the hash string
      */
     public String getDigest() {
         return digest;
@@ -43,8 +39,6 @@ public class CouchAttachment {
 
     /**
      * Get the length of the attachment
-     * 
-     * @return the length of the attachment
      */
     public Integer getLength() {
         return length;
@@ -52,8 +46,6 @@ public class CouchAttachment {
 
     /**
      * Get the rev position
-     * 
-     * @return
      */
     public Integer getRevpos() {
         return revpos;
@@ -61,8 +53,6 @@ public class CouchAttachment {
 
     /**
      * True if the attachment contains the content
-     * 
-     * @return
      */
     public boolean hasData() {
         return stub == null;
@@ -70,8 +60,6 @@ public class CouchAttachment {
 
     /**
      * Return the payload of the document
-     * 
-     * @return
      */
     public byte[] getData() {
         return data;
@@ -80,8 +68,6 @@ public class CouchAttachment {
     /**
      * Return the encoded (compressed) length of the document.
      * May be null if the attachment was not requested with this information.
-     * 
-     * @return
      */
     @Nullable
     public Integer getEncodedLength() {
@@ -90,8 +76,6 @@ public class CouchAttachment {
 
     /**
      * Get the encoding (compression format) used for this document
-     * 
-     * @return
      */
     @Nullable
     public String getEncoding() {

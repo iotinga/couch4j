@@ -4,6 +4,10 @@ import jakarta.annotation.Nullable;
 
 /**
  * Result of a view query
+ * 
+ * @param <K> type of the key
+ * @param <V> type of the value
+ * @param <D> type of the document
  */
 public class CouchViewItem<K, V, D> {
     private String id;

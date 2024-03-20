@@ -4,6 +4,8 @@ import jakarta.annotation.Nullable;
 
 /**
  * A response that can be either an ok response or an error
+ * 
+ * @param <T> type of the document
  */
 public class CouchOkErrorResponse<T> {
     private T ok;
