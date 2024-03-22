@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,11 +263,14 @@ class CouchDatabaseImpl implements CouchDatabase {
 
     @Override
     public CouchChangesResponse changes(CouchChangesRequest request) throws CouchException {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment("_changes")
-                .build();
+        HttpUrl.Builder url = baseUrl.newBuilder()
+                .addPathSegment("_changes");
 
-        CouchChangesResponse response = server.jsonPost(url, request, CouchChangesResponse.class);
+        for (Entry<String, String> entry : request.getQueryParams().entrySet()) {
+            url.addQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        CouchChangesResponse response = server.jsonPost(url.build(), request.getBody(), CouchChangesResponse.class);
 
         return response;
     }

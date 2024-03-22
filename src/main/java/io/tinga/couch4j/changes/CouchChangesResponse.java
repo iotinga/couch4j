@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
  * Changes feed response
  */
 public class CouchChangesResponse {
-    private Long lastSeq;
+    private String lastSeq;
     private Integer pending;
     private List<CouchChangeItem> results;
 
@@ -18,7 +18,7 @@ public class CouchChangesResponse {
      * @return
      */
     @JsonGetter("last_seq")
-    public long getLastSeq() {
+    public String getLastSeq() {
         return lastSeq;
     }
 
@@ -38,5 +38,10 @@ public class CouchChangesResponse {
      */
     public Integer getPending() {
         return pending;
+    }
+
+    @Override
+    public String toString() {
+        return "CouchChangesResponse [lastSeq=" + lastSeq + ", pending=" + pending + ", results=" + results + "]";
     }
 }

@@ -1,13 +1,11 @@
 package io.tinga.couch4j.changes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-public class CouchChangesRequest {
+public class CouchChangesRequest implements Cloneable {
     /**
      * All past changes are returned immediately
      */
@@ -49,18 +47,14 @@ public class CouchChangesRequest {
     private String view;
     private Integer seqInterval;
 
-    @JsonGetter("doc_ids")
-    @JsonInclude(Include.NON_NULL)
     public List<String> getDocIds() {
         return docIds;
     }
 
-    @JsonSetter("doc_ids")
     public void setDocIds(List<String> doc_ids) {
         this.docIds = doc_ids;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Boolean getConflicts() {
         return conflicts;
     }
@@ -69,7 +63,6 @@ public class CouchChangesRequest {
         this.conflicts = conflicts;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Boolean getDescending() {
         return descending;
     }
@@ -78,7 +71,6 @@ public class CouchChangesRequest {
         this.descending = descending;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public String getFeed() {
         return feed;
     }
@@ -87,7 +79,6 @@ public class CouchChangesRequest {
         this.feed = feed;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public String getFilter() {
         return filter;
     }
@@ -96,7 +87,6 @@ public class CouchChangesRequest {
         this.filter = filter;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Integer getHeartbeat() {
         return heartbeat;
     }
@@ -105,18 +95,14 @@ public class CouchChangesRequest {
         this.heartbeat = heartbeat;
     }
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonGetter("include_docs")
     public Boolean getIncludeDocs() {
         return includeDocs;
     }
 
-    @JsonSetter("include_docs")
     public void setIncludeDocs(Boolean include_docs) {
         this.includeDocs = include_docs;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Boolean getAttachments() {
         return attachments;
     }
@@ -125,29 +111,22 @@ public class CouchChangesRequest {
         this.attachments = attachments;
     }
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonGetter("att_encoding_info")
     public Boolean getAttEncodingInfo() {
         return attEncodingInfo;
     }
 
-    @JsonSetter("att_encoding_info")
     public void setAttEncodingInfo(Boolean att_encoding_info) {
         this.attEncodingInfo = att_encoding_info;
     }
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonGetter("last_event_id")
     public Integer getLastEventId() {
         return lastEventId;
     }
 
-    @JsonSetter("last_event_id")
     public void setLastEventId(Integer last_event_id) {
         this.lastEventId = last_event_id;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Integer getLimit() {
         return limit;
     }
@@ -156,7 +135,6 @@ public class CouchChangesRequest {
         this.limit = limit;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public String getSince() {
         return since;
     }
@@ -165,7 +143,6 @@ public class CouchChangesRequest {
         this.since = since;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public String getStyle() {
         return style;
     }
@@ -174,7 +151,6 @@ public class CouchChangesRequest {
         this.style = style;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public Integer getTimeout() {
         return timeout;
     }
@@ -183,7 +159,6 @@ public class CouchChangesRequest {
         this.timeout = timeout;
     }
 
-    @JsonInclude(Include.NON_NULL)
     public String getView() {
         return view;
     }
@@ -192,23 +167,66 @@ public class CouchChangesRequest {
         this.view = view;
     }
 
-    @JsonInclude(Include.NON_NULL)
-    @JsonGetter("seq_interval")
     public Integer getSeqInterval() {
         return seqInterval;
     }
 
-    @JsonSetter("seq_interval")
     public void setSeqInterval(Integer seq_interval) {
         this.seqInterval = seq_interval;
     }
 
+    @Override
     protected CouchChangesRequest clone() {
         try {
             return (CouchChangesRequest) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("internal error. Shall never have happened!", e);
         }
+    }
+
+    public Map<String, String> getQueryParams() {
+        Map<String, Object> items = new HashMap<>();
+
+        items.put("conflicts", conflicts);
+        items.put("descending", descending);
+        items.put("feed", feed);
+        items.put("filter", filter);
+        items.put("hreartbeat", heartbeat);
+        items.put("include_docs", includeDocs);
+        items.put("attachments", attachments);
+        items.put("att_encoding_info", attEncodingInfo);
+        items.put("last_event_id", lastEventId);
+        items.put("limit", limit);
+        items.put("since", since);
+        items.put("style", style);
+        items.put("timeout", timeout);
+        items.put("view", view);
+        items.put("seq_interval", seqInterval);
+
+        Map<String, String> result = new HashMap<>();
+        for (Entry<String, Object> item : items.entrySet()) {
+            if (item.getValue() != null) {
+                result.put(item.getKey(), item.getValue().toString());
+            }
+        }
+
+        return result;
+    }
+
+    public Map<String, Object> getBody() {
+        if (docIds != null) {
+            return Map.of("doc_ids", docIds);
+        }
+
+        return Map.of();
+    }
+
+    @Override
+    public String toString() {
+        return "CouchChangesRequest [docIds=" + docIds + ", conflicts=" + conflicts + ", descending=" + descending
+                + ", feed=" + feed + ", filter=" + filter + ", heartbeat=" + heartbeat + ", includeDocs=" + includeDocs
+                + ", attachments=" + attachments + ", attEncodingInfo=" + attEncodingInfo + ", lastEventId="
+                + lastEventId + ", limit=" + limit + ", since=" + since + ", style=" + style + ", timeout=" + timeout
+                + ", view=" + view + ", seqInterval=" + seqInterval + "]";
     }
 }

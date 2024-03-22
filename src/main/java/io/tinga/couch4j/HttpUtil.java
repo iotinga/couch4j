@@ -29,7 +29,8 @@ class HttpUtil {
 
     public static RequestBody getJsonBody(Object object) throws CouchException {
         try {
-            return RequestBody.create(OBJECT_MAPPER.writeValueAsString(object), JSON_MEDIA_TYPE);
+            String jsonString = OBJECT_MAPPER.writeValueAsString(object);
+            return RequestBody.create(jsonString, JSON_MEDIA_TYPE);
         } catch (JsonProcessingException e) {
             throw new CouchException(
                     "document serialization failed. Check if document type is correctly serializable!");

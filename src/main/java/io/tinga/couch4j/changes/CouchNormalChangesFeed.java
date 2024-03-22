@@ -3,117 +3,118 @@ package io.tinga.couch4j.changes;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import io.tinga.couch4j.CouchDatabase;
 
 public class CouchNormalChangesFeed implements CouchChangesFeed, Runnable {
     private final ExecutorService executorService;
     private final CouchDatabase db;
-    private final CouchChangesRequest params;
+    private final CouchChangesRequest initialParams;
+    private final int pollIntervalMs;
     private Consumer<CouchChangeItem> onItem;
-    private Function<CouchChangesResponse, Boolean> onResponse;
     private Consumer<Exception> onError;
     private ChangesFeedState state;
-    private String currentSince;
     private CouchChangesRequest currentParams;
 
     public CouchNormalChangesFeed(CouchDatabase db, CouchChangesRequest params) {
-        this.state = ChangesFeedState.IDLE;
-        this.currentSince = params.getSince();
-        this.params = params;
-        this.currentParams = this.params.clone();
-        this.executorService = Executors.newSingleThreadExecutor();
-        this.db = db;
+        this(db, params, 1000);
     }
 
-    public CouchNormalChangesFeed(CouchDatabase db, CouchChangesRequest params,
+    public CouchNormalChangesFeed(CouchDatabase db, CouchChangesRequest params, int pollIntervalMs) {
+        this(db, params, pollIntervalMs, Executors.newSingleThreadExecutor());
+    }
+
+    public CouchNormalChangesFeed(CouchDatabase db, CouchChangesRequest params, int pollIntervalMs,
             ExecutorService executorService) {
         this.state = ChangesFeedState.IDLE;
-        this.currentSince = params.getSince();
-        this.params = params;
-        this.currentParams = this.params.clone();
+        this.initialParams = params.clone();
         this.executorService = executorService;
+        this.pollIntervalMs = pollIntervalMs;
         this.db = db;
+        this.currentParams = this.initialParams.clone();
+
+        // override the parameters for this polling
+        this.initialParams.setFeed(CouchChangesRequest.FEED_NORMAL);
     }
 
     @Override
-    public ChangesFeedState state() {
+    public ChangesFeedState getState() {
         return this.state;
     }
 
     @Override
     public void start(Consumer<CouchChangeItem> onItem, Consumer<Exception> onError) {
-        if (this.state != ChangesFeedState.IDLE) {
-            return;
+        if (state != ChangesFeedState.IDLE) {
+            throw new IllegalStateException("feed is already started");
         }
 
-        this.state = ChangesFeedState.SETUP;
-        this.onResponse = null;
-        this.onItem = onItem == null ? this.onItem : onItem;
-        this.onError = onError == null ? this.onError : onError;
+        state = ChangesFeedState.STARTING;
+        this.onItem = onItem;
+        this.onError = onError;
+        currentParams = this.initialParams.clone();
+        executorService.submit(this);
+    }
 
-        this.executorService.submit(this);
+    @Override
+    public void resume() {
+        if (state != ChangesFeedState.PAUSED) {
+            throw new IllegalStateException("feed is not paused. Use start to start it!");
+        }
+
+        state = ChangesFeedState.STARTING;
+        executorService.submit(this);
     }
 
     @Override
     public void pause() {
-        if (this.state != ChangesFeedState.RUNNING) {
-            return;
+        if (state != ChangesFeedState.RUNNING) {
+            throw new IllegalStateException("feed is not running");
         }
-        this.state = ChangesFeedState.HALTING;
+        state = ChangesFeedState.PAUSING;
     }
 
     @Override
     public void stop() {
-        if (this.state != ChangesFeedState.RUNNING) {
-            return;
+        if (state != ChangesFeedState.RUNNING) {
+            throw new IllegalStateException("feed is not running");
         }
-        this.state = ChangesFeedState.HALTING;
-        this.onItem = null;
-        this.onResponse = null;
-        this.onError = null;
-        this.currentSince = this.params.getSince();
-        this.currentParams = this.params.clone();
+        state = ChangesFeedState.STOPPING;
+        onItem = null;
+        onError = null;
     }
 
     public void run() {
-        this.state = ChangesFeedState.RUNNING;
-        var params = this.currentParams.clone();
-        this.params.setSince(this.currentSince);
-        while (this.state == ChangesFeedState.RUNNING) {
+        state = ChangesFeedState.RUNNING;
+
+        while (state == ChangesFeedState.RUNNING) {
             try {
-                var changes = this.db.changes(params);
-                if (this.onItem != null && changes != null) {
+                CouchChangesResponse changes = db.changes(this.currentParams);
+                if (onItem != null && changes != null) {
                     for (CouchChangeItem change : changes.getResults()) {
-                        this.onItem.accept(change);
+                        onItem.accept(change);
                     }
                 }
-                if (this.onResponse != null && changes != null) {
-                    for (CouchChangeItem change : changes.getResults()) {
-                        this.onItem.accept(change);
-                    }
-                }
+
+                // set the since of the request as the last since
+                currentParams.setSince(changes.getLastSeq());
+
+                Thread.sleep(pollIntervalMs);
             } catch (Exception e) {
-                if (this.onError != null) {
-                    this.onError.accept(e);
+                if (onError != null) {
+                    onError.accept(e);
                 }
             }
         }
-        this.state = ChangesFeedState.IDLE;
-    }
 
-    @Override
-    public void start(Function<CouchChangesResponse, Boolean> onResponse, Consumer<Exception> onError) {
-        if (this.state != ChangesFeedState.IDLE) {
-            return;
+        switch (state) {
+            case ChangesFeedState.STOPPING:
+                state = ChangesFeedState.IDLE;
+                break;
+            case ChangesFeedState.PAUSING:
+                state = ChangesFeedState.PAUSED;
+                break;
+            default:
+                throw new IllegalStateException("unreachable state");
         }
-
-        this.state = ChangesFeedState.SETUP;
-        this.onItem = null;
-        this.onResponse = onResponse == null ? this.onResponse : onResponse;
-        this.onError = onError == null ? this.onError : onError;
-
-        this.executorService.submit(this);
     }
 }

@@ -2,53 +2,74 @@ package io.tinga.couch4j.changes;
 
 import java.util.List;
 
+/**
+ * An item of the changes feed
+ */
 public class CouchChangeItem {
+    /**
+     * A change item
+     */
     public static class Change {
         private String rev;
 
+        /**
+         * Get the document revision
+         * 
+         * @return the document revision
+         */
         public String getRev() {
             return rev;
         }
 
-        public void setRev(String rev) {
-            this.rev = rev;
+        @Override
+        public String toString() {
+            return "Change [rev=" + rev + "]";
         }
     }
 
     private String id;
-    private long seq;
+    private String seq;
     private boolean deleted;
     private List<Change> changes;
 
+    /**
+     * Get the id of the document
+     * 
+     * @return id of the document
+     */
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public long getSeq() {
+    /**
+     * Get the sequence number
+     * 
+     * @return sequence number
+     */
+    public String getSeq() {
         return seq;
     }
 
-    public void setSeq(long seq) {
-        this.seq = seq;
-    }
-
+    /**
+     * Get if the document is deleted
+     * 
+     * @return true if deleted
+     */
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
+    /**
+     * Get a list of changes
+     * 
+     * @return a list of changes
+     */
     public List<Change> getChanges() {
         return changes;
     }
 
-    public void setChanges(List<Change> changes) {
-        this.changes = changes;
+    @Override
+    public String toString() {
+        return "CouchChangeItem [id=" + id + ", seq=" + seq + ", deleted=" + deleted + ", changes=" + changes + "]";
     }
 }
