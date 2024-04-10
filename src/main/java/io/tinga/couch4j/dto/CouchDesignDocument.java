@@ -80,6 +80,7 @@ public class CouchDesignDocument extends CouchDocument {
          * @return
          */
         @Nullable
+        @JsonInclude(Include.NON_NULL)
         public String getReduce() {
             return reduce;
         }
@@ -89,7 +90,6 @@ public class CouchDesignDocument extends CouchDocument {
          * 
          * @param reduce
          */
-        @Nullable
         public void setReduce(String reduce) {
             this.reduce = reduce;
         }
