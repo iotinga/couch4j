@@ -301,7 +301,7 @@ class CouchDatabaseImpl implements CouchDatabase {
                 // a conflict may be generate by the document already existing. Load it to get
                 // the _rev field.
                 CouchDesignDocument oldDoc = getDesignDocument(doc.getId());
-                doc.setRev(oldDoc.getId());
+                doc.setRev(oldDoc.getRev());
 
                 // recursively call the document creation.
                 createOrUpdateDesignDocument(doc);
