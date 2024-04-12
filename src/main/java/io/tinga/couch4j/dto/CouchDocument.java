@@ -5,6 +5,7 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * A base CouchDb document. Must be extended by the document
  * that are used in the application.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CouchDocument implements CouchKey {
     @Nullable
     private String id;

@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import com.github.javafaker.Faker;
 
 import io.tinga.couch4j.dto.CouchDesignDocument;
+import io.tinga.couch4j.dto.CouchDocument;
 import io.tinga.couch4j.exception.CouchException;
+import io.tinga.couch4j.view.CouchViewQuery;
+import io.tinga.couch4j.view.CouchViewResponse;
 
 class CouchDesignDocumentTest {
     Faker faker = new Faker();
@@ -47,5 +50,14 @@ class CouchDesignDocumentTest {
 
     @Test
     void queryDesignDoc() throws CouchException {
+        CouchDesignDocument dd = new CouchDesignDocument("test");
+
+        dd.setViews(Map.of("view1", new CouchDesignDocument.View("function (doc) { emit(doc._id, 1) }")));
+
+        db.createOrUpdateDesignDocument(dd);
+
+        db.put(new CouchDesignDocument());
+
+        db.view(new CouchViewQuery<String, Integer>("test", "view1").setIncludeDocs(true), CouchDocument.class);
     }
 }
