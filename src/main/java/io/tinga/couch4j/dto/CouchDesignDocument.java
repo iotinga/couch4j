@@ -35,6 +35,9 @@ public class CouchDesignDocument extends CouchDocument {
         @Nullable
         private String reduce;
 
+        public View() {
+        }
+
         /**
          * Construct a view with a map function
          * 
@@ -108,6 +111,9 @@ public class CouchDesignDocument extends CouchDocument {
     private Map<String, View> views = new HashMap<>();
     private Map<String, String> filters = new HashMap<>();
     private Map<String, String> updates = new HashMap<>();
+
+    public CouchDesignDocument() {
+    }
 
     /**
      * Creates a design document with the specified id
