@@ -58,6 +58,6 @@ class CouchDesignDocumentTest {
 
         db.put(new CouchDesignDocument());
 
-        db.view(new CouchViewQuery<String, Integer>("test", "view1").setIncludeDocs(true), CouchDocument.class);
+        db.view(new CouchViewQuery<String, Integer>("test", "view1").setIncludeDocs(true));
     }
 }
