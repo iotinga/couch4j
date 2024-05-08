@@ -55,5 +55,5 @@ TestCouchDoc doc2 = db.get(doc.getId(), TestCouchDoc.class);
 // delete document
 db.delete(doc);
 
-// see README.md for more examples
+// see Javadoc for more examples
 ```
