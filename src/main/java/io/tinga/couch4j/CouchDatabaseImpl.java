@@ -24,6 +24,7 @@ import io.tinga.couch4j.exception.CouchException;
 import io.tinga.couch4j.exception.CouchPreconditionFailed;
 import io.tinga.couch4j.find.CouchFindQuery;
 import io.tinga.couch4j.find.CouchFindResponse;
+import io.tinga.couch4j.view.CouchViewQueriesResponse;
 import io.tinga.couch4j.view.CouchViewQuery;
 import io.tinga.couch4j.view.CouchViewResponse;
 import okhttp3.HttpUrl;
@@ -310,5 +311,30 @@ class CouchDatabaseImpl implements CouchDatabase {
                 throw e;
             }
         }
+    }
+
+    @Override
+    public <K, V> List<CouchViewResponse<K, V, CouchDocument>> view(List<CouchViewQuery<K, V>> queries)
+            throws CouchException {
+        return viewMany(queries, CouchDocument.class);
+    }
+
+    @Override
+    public <K, V, T extends CouchDocument> List<CouchViewResponse<K, V, T>> viewMany(List<CouchViewQuery<K, V>> queries,
+            Class<T> classOfT) throws CouchException {
+        HttpUrl url = baseUrl.newBuilder()
+                .addPathSegment("_design")
+                .addPathSegment(queries.getFirst().getDesignDoc())
+                .addPathSegment("_view")
+                .addPathSegment(queries.getFirst().getName())
+                .addPathSegment("queries")
+                .build();
+
+        CouchViewQueriesResponse<K, V, T> response = server.jsonPost(url, Map.of("queries", queries),
+                CouchViewQueriesResponse.class,
+                queries.getFirst().getClassOfK(),
+                queries.getFirst().getClassOfV(), classOfT);
+
+        return response.getResults();
     }
 }
