@@ -204,9 +204,9 @@ public interface CouchDatabase {
          * Perform multiple queries on a view. All the queries must be performed to the
          * same design document and view!
          * 
-         * @param <K>   type of the view key (typically either String)
-         * @param <V>   type of the view value
-         * @param query query to perform on the view
+         * @param <K>     type of the view key (typically either String)
+         * @param <V>     type of the view value
+         * @param queries query to perform on the view
          * @return the couchdb view result
          * @throws CouchException
          */
@@ -221,7 +221,7 @@ public interface CouchDatabase {
          * @param <V>      type of the view value
          * @param <T>      type of the document returned of the view (if queried with
          *                 includeDocs)
-         * @param query    query to perform on the view
+         * @param queries  query to perform on the view
          * @param classOfT class of the T type
          * @return the couchdb view result
          * @throws CouchException
