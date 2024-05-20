@@ -1,5 +1,7 @@
 package io.tinga.couch4j;
 
+import java.time.Duration;
+
 import io.tinga.couch4j.auth.CouchAuthentication;
 import io.tinga.couch4j.auth.CouchAuthenticationBasic;
 import io.tinga.couch4j.auth.CouchAuthenticationJwt;
@@ -10,6 +12,7 @@ import io.tinga.couch4j.auth.CouchAuthenticationNone;
  */
 public class CouchBuilder {
     private String uri = "http://localhost:5984";
+    private Duration callTimeout = Duration.ofSeconds(30);
     private CouchAuthentication auth = new CouchAuthenticationNone();
 
     /**
@@ -20,6 +23,19 @@ public class CouchBuilder {
      */
     public CouchBuilder setUri(String uri) {
         this.uri = uri;
+        return this;
+    }
+
+    /**
+     * Set the timeout for a request (see
+     * {@link OkHttpClient.Builder#callTimeout(Duration) OkHttpClient.Builder}). The
+     * default is 30 seconds
+     * 
+     * @param callTimeout The timeout duration
+     * @return this object
+     */
+    public CouchBuilder setCallTimeout(Duration callTimeout) {
+        this.callTimeout = callTimeout;
         return this;
     }
 
@@ -52,6 +68,6 @@ public class CouchBuilder {
      * @return CouchDb server instance
      */
     public CouchServer build() {
-        return new CouchServerImpl(uri, auth);
+        return new CouchServerImpl(uri, callTimeout, auth);
     }
 }

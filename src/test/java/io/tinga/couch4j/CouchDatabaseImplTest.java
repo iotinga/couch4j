@@ -67,7 +67,7 @@ class CouchDatabaseImplTest {
     CouchServer server = new CouchBuilder()
             .setUri("http://localhost:5984")
             .setBasicAuth("admin", "admin")
-            .build();;
+            .build();
     CouchDatabase db;
 
     List<BasicCouchDoc> getRandomDocs(int howMany) {

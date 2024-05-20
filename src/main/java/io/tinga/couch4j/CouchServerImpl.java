@@ -1,6 +1,7 @@
 package io.tinga.couch4j;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +22,16 @@ class CouchServerImpl implements CouchServer {
 
     private HttpUrl baseUrl;
     private CouchAuthentication auth;
-    private OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client;
 
     /**
      * @param uri  uri of the server
      * @param auth authentication information
      */
-    CouchServerImpl(String uri, CouchAuthentication auth) {
+    CouchServerImpl(String uri, Duration callTimeout, CouchAuthentication auth) {
         this.baseUrl = HttpUrl.get(uri);
         this.auth = auth;
+        this.client = new OkHttpClient.Builder().callTimeout(callTimeout).build();
     }
 
     @Nullable

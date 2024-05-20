@@ -9,10 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.github.javafaker.Faker;
 
 import io.tinga.couch4j.dto.CouchDesignDocument;
-import io.tinga.couch4j.dto.CouchDocument;
 import io.tinga.couch4j.exception.CouchException;
 import io.tinga.couch4j.view.CouchViewQuery;
-import io.tinga.couch4j.view.CouchViewResponse;
 
 class CouchDesignDocumentTest {
     Faker faker = new Faker();
