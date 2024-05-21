@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.tinga.couch4j</groupId>
     <artifactId>couch4j</artifactId>
-    <version>0.10.0</version>
+    <version>1.0.0</version>
     <name>Couch4j</name>
     <description>A simple Apache CouchDb client in Java</description>
 
