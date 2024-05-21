@@ -27,8 +27,7 @@ public class CouchBuilder {
     }
 
     /**
-     * Set the timeout for a request (see
-     * {@link OkHttpClient.Builder#callTimeout(Duration) OkHttpClient.Builder}). The
+     * Set the timeout for a request. The
      * default is 30 seconds
      * 
      * @param callTimeout The timeout duration
