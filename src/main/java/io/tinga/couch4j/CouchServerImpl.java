@@ -28,17 +28,16 @@ class CouchServerImpl implements CouchServer {
      * @param uri  uri of the server
      * @param auth authentication information
      */
-    CouchServerImpl(String uri, Duration callTimeout, CouchAuthentication auth) {
+    CouchServerImpl(String uri, Duration timeout, CouchAuthentication auth) {
         this.baseUrl = HttpUrl.get(uri);
         this.auth = auth;
-        this.client = new OkHttpClient.Builder().callTimeout(callTimeout).build();
+        this.client = new OkHttpClient.Builder().callTimeout(timeout).readTimeout(timeout)
+                .writeTimeout(timeout).build();
     }
 
     @Nullable
     private ResponseBody request(Request.Builder request) throws CouchException {
-        Request requestWithAuth = request
-                .addHeader("Authorization", auth.getAuthorizationHeader())
-                .build();
+        Request requestWithAuth = request.addHeader("Authorization", auth.getAuthorizationHeader()).build();
 
         log.debug("send {}", requestWithAuth);
 
@@ -55,74 +54,61 @@ class CouchServerImpl implements CouchServer {
         }
     }
 
-    <T> T jsonRequest(Request.Builder requestBuilder, Class<?> classOfT, Class<?>... otherT) throws CouchException {
+    <T> T jsonRequest(Request.Builder requestBuilder, Class<?> classOfT, Class<?>... otherT)
+            throws CouchException {
         return HttpUtil.getJsonResponseBody(request(requestBuilder), classOfT, otherT);
     }
 
     @Nullable
     ResponseBody get(HttpUrl url) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .get()
-                .url(url);
+        Request.Builder req = new Request.Builder().get().url(url);
 
         return request(req);
     }
 
     <T> T jsonGet(HttpUrl url, Class<?> classOfT, Class<?>... otherT) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .get()
-                .url(url);
+        Request.Builder req = new Request.Builder().get().url(url);
 
         return jsonRequest(req, classOfT, otherT);
     }
 
     @Nullable
     ResponseBody delete(HttpUrl url) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .delete()
-                .url(url);
+        Request.Builder req = new Request.Builder().delete().url(url);
 
         return request(req);
     }
 
     <T> T jsonDelete(HttpUrl url, Class<?> classOfT, Class<?>... otherT) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .delete()
-                .url(url);
+        Request.Builder req = new Request.Builder().delete().url(url);
 
         return jsonRequest(req, classOfT, otherT);
     }
 
     @Nullable
     ResponseBody post(HttpUrl url, RequestBody body) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .post(body)
-                .url(url);
+        Request.Builder req = new Request.Builder().post(body).url(url);
 
         return request(req);
     }
 
-    <T> T jsonPost(HttpUrl url, Object body, Class<?> classOfT, Class<?>... otherT) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .post(HttpUtil.getJsonBody(body))
-                .url(url);
+    <T> T jsonPost(HttpUrl url, Object body, Class<?> classOfT, Class<?>... otherT)
+            throws CouchException {
+        Request.Builder req = new Request.Builder().post(HttpUtil.getJsonBody(body)).url(url);
 
         return jsonRequest(req, classOfT, otherT);
     }
 
     @Nullable
     ResponseBody put(HttpUrl url, RequestBody body) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .put(body)
-                .url(url);
+        Request.Builder req = new Request.Builder().put(body).url(url);
 
         return request(req);
     }
 
-    <T> T jsonPut(HttpUrl url, Object body, Class<?> classOfT, Class<?>... otherT) throws CouchException {
-        Request.Builder req = new Request.Builder()
-                .put(HttpUtil.getJsonBody(body))
-                .url(url);
+    <T> T jsonPut(HttpUrl url, Object body, Class<?> classOfT, Class<?>... otherT)
+            throws CouchException {
+        Request.Builder req = new Request.Builder().put(HttpUtil.getJsonBody(body)).url(url);
 
         return jsonRequest(req, classOfT, otherT);
     }

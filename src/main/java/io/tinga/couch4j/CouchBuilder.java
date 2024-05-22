@@ -12,7 +12,7 @@ import io.tinga.couch4j.auth.CouchAuthenticationNone;
  */
 public class CouchBuilder {
     private String uri = "http://localhost:5984";
-    private Duration callTimeout = Duration.ofSeconds(30);
+    private Duration timeout = Duration.ofSeconds(30);
     private CouchAuthentication auth = new CouchAuthenticationNone();
 
     /**
@@ -27,14 +27,14 @@ public class CouchBuilder {
     }
 
     /**
-     * Set the timeout for a request. The
-     * default is 30 seconds
+     * Set the timeout for a request (sets read + write, then read and write
+     * separately). The default is 30 seconds
      * 
-     * @param callTimeout The timeout duration
+     * @param timeout The timeout duration
      * @return this object
      */
-    public CouchBuilder setCallTimeout(Duration callTimeout) {
-        this.callTimeout = callTimeout;
+    public CouchBuilder setTimeout(Duration timeout) {
+        this.timeout = timeout;
         return this;
     }
 
@@ -67,6 +67,6 @@ public class CouchBuilder {
      * @return CouchDb server instance
      */
     public CouchServer build() {
-        return new CouchServerImpl(uri, callTimeout, auth);
+        return new CouchServerImpl(uri, timeout, auth);
     }
 }
